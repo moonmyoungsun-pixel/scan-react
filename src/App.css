@@ -1,0 +1,27 @@
+/* 전체 레이아웃: Sidebar + Content */
+.layout {
+  display: flex;
+  min-height: 100vh;  /* 화면 전체 높이 */
+  background: #f7f9fc;
+}
+
+/* 오른쪽 컨텐츠 영역 */
+.content {
+  flex: 1;
+  padding: 40px 60px;
+  background: #f7f9fc;
+  margin-left: 220px; /* Sidebar width 만큼 왼쪽 여백 */
+}
+
+.icon {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* 기능별 색 적용 */
+.icon-home { color: #4A90E2; }
+.icon-orders { color: #FF8A00; }
+.icon-menus { color: #50C878; }
+.icon-merchants { color: #9B59B6; }
+.icon-sales { color: #E74C3C; }
+.icon-settings { color: #34495E; }
