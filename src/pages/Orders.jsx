@@ -1,41 +1,58 @@
-<?php
-header('Content-Type: application/json; charset=utf-8');
-header("Access-Control-Allow-Origin: *");
+import React, { useEffect, useState } from "react";
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
-global $wpdb;
+export default function Orders() {
+  const mcode = localStorage.getItem("mcode");
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-$id = $_GET['id'] ?? '';
+  useEffect(() => {
+    if (!mcode) {
+      setLoading(false);
+      return;
+    }
 
-if (!$id) {
-  echo json_encode([
-    'success' => false,
-    'message' => 'order id missing'
-  ]);
-  exit;
+    fetch(`https://scankorea.kr/scan-fnb/api/orders.php?mcode=${mcode}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          setOrders(json.data);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [mcode]);
+
+  if (loading) {
+    return <div>주문 불러오는 중...</div>;
+  }
+
+  return (
+    <div>
+      <h2>주문 내역</h2>
+
+      {orders.length === 0 ? (
+        <p>주문 내역이 없습니다.</p>
+      ) : (
+        <table width="100%" cellPadding="8">
+          <thead>
+            <tr>
+              <th>주문번호</th>
+              <th>고객명</th>
+              <th>금액</th>
+              <th>주문일시</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map(o => (
+              <tr key={o.id}>
+                <td>ORD-{o.id}</td>
+                <td>{o.customer_name || "-"}</td>
+                <td>{Number(o.total_price).toLocaleString()}원</td>
+                <td>{o.created_at}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
-
-$table = $wpdb->prefix . 'fnb_orders';
-
-$order = $wpdb->get_row(
-  $wpdb->prepare(
-    "SELECT
-      id,
-      customer_name,
-      customer_phone,
-      customer_address,
-      customer_request,
-      voice_text,
-      total_price,
-      created_at
-     FROM $table
-     WHERE id = %d",
-    $id
-  ),
-  ARRAY_A
-);
-
-echo json_encode([
-  'success' => true,
-  'data' => $order
-]);
