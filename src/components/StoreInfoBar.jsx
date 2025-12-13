@@ -1,15 +1,32 @@
 useEffect(() => {
   if (!mcode) {
-    setLoading(false);   // ✅ 로딩 종료
+    setLoading(false);
     return;
   }
 
-  fetch(`https://scankorea.kr/scan-fnb/api/store.php?mcode=${mcode}`)
-    .then(res => res.json())
-    .then(json => {
-      if (json.success) {
+  const controller = new AbortController();
+
+  const loadStore = async () => {
+    try {
+      const res = await fetch(
+        `/scan-fnb/api/store.php?mcode=${mcode}`,
+        { signal: controller.signal }
+      );
+      const json = await res.json();
+
+      if (json?.success) {
         setStore(json.data);
       }
-    })
-    .finally(() => setLoading(false));
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('store fetch error', err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadStore();
+
+  return () => controller.abort();
 }, [mcode]);
