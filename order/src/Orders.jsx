@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const nextStatus = (status) => {
   if (status === 'received') return 'preparing';
   if (status === 'preparing') return 'completed';
@@ -17,9 +19,6 @@ const statusStyle = (status) => {
   }
 };
 
-
-import { useEffect, useState } from 'react';
-
 export default function Orders({ mcode }) {
   const [orders, setOrders] = useState([]);
 
@@ -28,15 +27,50 @@ export default function Orders({ mcode }) {
     setOrders(await res.json());
   };
 
-  useEffect(() => { load(); }, [mcode]);
+  useEffect(() => {
+    load();
+  }, [mcode]);
 
   return (
     <div>
-      {orders.map(o => (
-        <div key={o.order_id}>
-          {o.order_id} / {o.total.toLocaleString()}원
-        </div>
-      ))}
+      {orders.map(o => {
+        const s = statusStyle(o.status);
+
+        return (
+          <div
+            key={o.order_id}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '10px 0',
+              borderBottom: '1px solid #eee'
+            }}
+          >
+            <div>
+              <strong>#{o.order_id}</strong>
+              <div style={{ fontSize: 13, color: '#666' }}>
+                {o.total.toLocaleString()}원
+              </div>
+            </div>
+
+            <div
+              style={{ color: s.color, fontWeight: 700, cursor: 'pointer' }}
+              onClick={() => {
+                setOrders(prev =>
+                  prev.map(x =>
+                    x.order_id === o.order_id
+                      ? { ...x, status: nextStatus(x.status) }
+                      : x
+                  )
+                );
+              }}
+              title="클릭해서 상태 변경"
+            >
+              {s.label}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
