@@ -1,27 +1,29 @@
 import { Link, useLocation } from "react-router-dom";
-import { 
-  FaHome, 
-  FaStore, 
-  FaUtensils, 
-  FaChartBar, 
+import {
+  FaStore,
+  FaUtensils,
+  FaChartBar,
   FaCog,
-  FaShoppingCart 
+  FaShoppingCart
 } from "react-icons/fa";
 import "./Sidebar.css";
 
 export default function Sidebar() {
   const location = useLocation();
-  const active = (path) => (location.pathname === path ? "active" : "");
+
+  // ✅ 하위 경로까지 active 유지
+  const active = (path) =>
+    location.pathname === path ||
+    location.pathname.startsWith(path + "/")
+      ? "active"
+      : "";
 
   return (
     <div className="sidebar">
       <h2 className="logo">SCAN F&B</h2>
 
       <nav>
-        <Link to="/" className={`menu-item ${active("/")}`}>
-          <FaHome className="icon" /> Home
-        </Link>
-
+        {/* ✅ 메인 = Orders */}
         <Link to="/orders" className={`menu-item ${active("/orders")}`}>
           <FaShoppingCart className="icon" /> Orders
         </Link>
