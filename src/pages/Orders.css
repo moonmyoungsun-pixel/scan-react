@@ -4,45 +4,54 @@
   padding: 16px;
 }
 
+.orders-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.orders-loading,
+.orders-empty {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 테이블 */
 .orders-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  font-size: 14px;
 }
 
 .orders-table th {
   text-align: left;
-  font-size: 14px;
-  color: #555;
-  border-bottom: 1px solid #ddd;
   padding: 10px 8px;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+  font-weight: 600;
 }
 
 .orders-table td {
   padding: 10px 8px;
   border-bottom: 1px solid #eee;
-  font-size: 14px;
+  vertical-align: middle;
 }
 
-.orders-table tr:hover {
+.orders-table tbody tr:hover {
   background: #f9fafb;
 }
 
-.order-status {
+/* 세부 스타일 */
+.orders-table .price {
   font-weight: 700;
-  cursor: pointer;
-  user-select: none;
 }
 
-/* 상태 색상 */
-.status-received {
-  color: #dc2626;   /* 빨강 */
+.orders-table .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-.status-preparing {
-  color: #f59e0b;   /* 노랑 */
-}
-
-.status-completed {
-  color: #16a34a;   /* 초록 */
+.orders-table .date {
+  color: #777;
+  font-size: 13px;
 }

@@ -1,5 +1,4 @@
 import "./Orders.css";
-
 import { useEffect, useState } from "react";
 
 export default function Orders({ mcode }) {
@@ -15,7 +14,7 @@ export default function Orders({ mcode }) {
     fetch(`https://scankorea.kr/scan-fnb/api/orders.php?mcode=${mcode}`)
       .then(res => res.json())
       .then(json => {
-        // ✅ API 응답 단순화
+        // ✅ API 응답 단순화 (배열 기준)
         setOrders(Array.isArray(json) ? json : []);
       })
       .catch(err => {
@@ -25,17 +24,17 @@ export default function Orders({ mcode }) {
   }, [mcode]);
 
   if (loading) {
-    return <div>주문 불러오는 중…</div>;
+    return <div className="orders-loading">주문 불러오는 중…</div>;
   }
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>주문 내역</h2>
+    <div className="orders-wrap">
+      <h2 className="orders-title">주문 내역</h2>
 
       {orders.length === 0 ? (
-        <p>주문 내역이 없습니다.</p>
+        <p className="orders-empty">주문 내역이 없습니다.</p>
       ) : (
-        <table width="100%" cellPadding="8">
+        <table className="orders-table">
           <thead>
             <tr>
               <th>주문번호</th>
@@ -47,10 +46,12 @@ export default function Orders({ mcode }) {
           <tbody>
             {orders.map(o => (
               <tr key={o.order_id}>
-                <td>ORD-{o.order_id}</td>
+                <td className="mono">ORD-{o.order_id}</td>
                 <td>{o.customer_name || "-"}</td>
-                <td>{Number(o.total).toLocaleString()}원</td>
-                <td>{o.created_at}</td>
+                <td className="price">
+                  {Number(o.total).toLocaleString()}원
+                </td>
+                <td className="date">{o.created_at}</td>
               </tr>
             ))}
           </tbody>
