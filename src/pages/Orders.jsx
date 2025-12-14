@@ -1,3 +1,5 @@
+import "./Orders.css";
+
 import { useEffect, useState } from "react";
 
 export default function Orders({ mcode }) {
