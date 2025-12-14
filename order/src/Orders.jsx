@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+const API_BASE = 'https://scankorea.kr';
+
 /* ------------------------------
    상태 순환 규칙
 ------------------------------ */
@@ -15,11 +17,11 @@ const nextStatus = (status) => {
 const statusStyle = (status) => {
   switch (status) {
     case 'received':
-      return { color: '#dc2626', label: '접수' };     // 빨강
+      return { color: '#dc2626', label: '접수' };
     case 'preparing':
-      return { color: '#f59e0b', label: '준비중' };   // 노랑
+      return { color: '#f59e0b', label: '준비중' };
     case 'completed':
-      return { color: '#16a34a', label: '완료' };     // 초록
+      return { color: '#16a34a', label: '완료' };
     default:
       return { color: '#6b7280', label: '알 수 없음' };
   }
@@ -34,7 +36,9 @@ export default function Orders({ mcode }) {
   ------------------------------ */
   const load = async () => {
     try {
-      const res = await fetch(`/scan-fnb/api/orders.php?mcode=${mcode}`);
+      const res = await fetch(
+        `${API_BASE}/scan-fnb/api/orders.php?mcode=${mcode}`
+      );
       const json = await res.json();
       setOrders(json || []);
     } catch (e) {
@@ -60,9 +64,6 @@ export default function Orders({ mcode }) {
     return <div style={{ color: '#999' }}>주문이 없습니다</div>;
   }
 
-  /* ------------------------------
-     렌더링
-  ------------------------------ */
   return (
     <div>
       {orders.map(o => {
@@ -79,7 +80,6 @@ export default function Orders({ mcode }) {
               borderBottom: '1px solid #eee'
             }}
           >
-            {/* 주문 정보 */}
             <div>
               <strong>#{o.order_id}</strong>
               <div style={{ fontSize: 13, color: '#666' }}>
@@ -87,7 +87,6 @@ export default function Orders({ mcode }) {
               </div>
             </div>
 
-            {/* 상태 표시 + 클릭 */}
             <div
               style={{
                 color: s.color,
@@ -99,7 +98,7 @@ export default function Orders({ mcode }) {
               onClick={async () => {
                 const newStatus = nextStatus(o.status);
 
-                // 1️⃣ UI 즉시 반영 (손맛)
+                // UI 즉시 반영
                 setOrders(prev =>
                   prev.map(x =>
                     x.order_id === o.order_id
@@ -108,18 +107,21 @@ export default function Orders({ mcode }) {
                   )
                 );
 
-                // 2️⃣ 서버 저장
+                // 서버 저장
                 try {
-                  await fetch('/scan-fnb/api/order-status.php', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                      order_id: o.order_id,
-                      status: newStatus
-                    })
-                  });
+                  await fetch(
+                    `${API_BASE}/scan-fnb/api/order-status.php`,
+                    {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                      },
+                      body: new URLSearchParams({
+                        order_id: o.order_id,
+                        status: newStatus
+                      })
+                    }
+                  );
                 } catch (e) {
                   console.error('order status save failed', e);
                 }
