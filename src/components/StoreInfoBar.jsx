@@ -5,11 +5,12 @@ useEffect(() => {
   }
 
   const controller = new AbortController();
+  const API_BASE = 'https://scankorea.kr';
 
   const loadStore = async () => {
     try {
       const res = await fetch(
-        `/scan-fnb/api/store.php?mcode=${mcode}`,
+        `${API_BASE}/scan-fnb/api/store.php?mcode=${mcode}`,
         { signal: controller.signal }
       );
       const json = await res.json();
