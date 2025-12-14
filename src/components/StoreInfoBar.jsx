@@ -1,8 +1,15 @@
-// src/components/StoreInfoBar.jsx
-export default function StoreInfoBar() {
+export default function StoreInfoBar({ mcode }) {
+  if (!mcode) return null;
+
   return (
-    <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee' }}>
-      {/* 매장 정보 바 (추후 구현) */}
+    <div
+      style={{
+        padding: "12px 16px",
+        borderBottom: "1px solid #eee",
+        fontWeight: 600
+      }}
+    >
+      매장 코드: {mcode}
     </div>
   );
 }
