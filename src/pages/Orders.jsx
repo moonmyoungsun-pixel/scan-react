@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-export default function Orders() {
-  const mcode = localStorage.getItem("mcode");
-  const navigate = useNavigate();
+export default function Orders({ mcode }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,15 +13,17 @@ export default function Orders() {
     fetch(`https://scankorea.kr/scan-fnb/api/orders.php?mcode=${mcode}`)
       .then(res => res.json())
       .then(json => {
-        if (json.success) {
-          setOrders(json.data);
-        }
+        // ✅ API 응답 단순화
+        setOrders(Array.isArray(json) ? json : []);
+      })
+      .catch(err => {
+        console.error("orders fetch error", err);
       })
       .finally(() => setLoading(false));
   }, [mcode]);
 
   if (loading) {
-    return <div>주문 불러오는 중...</div>;
+    return <div>주문 불러오는 중…</div>;
   }
 
   return (
@@ -45,14 +44,10 @@ export default function Orders() {
           </thead>
           <tbody>
             {orders.map(o => (
-              <tr
-                key={o.id}
-                onClick={() => navigate(`/orders/${o.id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                <td>ORD-{o.id}</td>
+              <tr key={o.order_id}>
+                <td>ORD-{o.order_id}</td>
                 <td>{o.customer_name || "-"}</td>
-                <td>{Number(o.total_price).toLocaleString()}원</td>
+                <td>{Number(o.total).toLocaleString()}원</td>
                 <td>{o.created_at}</td>
               </tr>
             ))}
