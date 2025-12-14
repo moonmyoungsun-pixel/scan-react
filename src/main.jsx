@@ -3,16 +3,19 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-// PHP 랜딩에 있는 mount 지점
-const el = document.getElementById("order-app");
+/*
+  ✅ Vite + React 기본 mount
+  index.html 의 <div id="root"></div> 와 반드시 일치해야 함
+*/
 
-// 안전장치
-if (el) {
-  const mcode = el.dataset.mcode;
+const rootEl = document.getElementById("root");
 
-  ReactDOM.createRoot(el).render(
+if (!rootEl) {
+  console.error("❌ root element not found");
+} else {
+  ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
-      <App mcode={mcode} />
+      <App />
     </React.StrictMode>
   );
 }
